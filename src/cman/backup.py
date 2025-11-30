@@ -5,7 +5,7 @@ from pathlib import Path
 import click
 from tqdm import tqdm
 
-from cards.api import auth_from_token, raw_list_cards
+from cman.api import auth_from_token, raw_list_cards
 
 
 def backup_deck(token: str, deck_name: str, deck_id: str):

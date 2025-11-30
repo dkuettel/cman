@@ -1,21 +1,21 @@
 [project]
-name = "cards"
+name = "cman"
 version = "0.1.0"
-description = "mochi cards"
+description = "manage mochi cards"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-   "Pillow",
-   "debugpy",
-   "flask",
-   "ipdb",
-   "ipython",
-   "pandoc",
-   "pydantic",
-   "pyserde[toml]",
-   "requests",
-   "tqdm",
-   "typer",
+    "Pillow",
+    "debugpy",
+    "flask",
+    "ipdb",
+    "ipython",
+    "pandoc",
+    "pydantic",
+    "pyserde[toml]",
+    "requests",
+    "tqdm",
+    "typer",
 ]
 
 [build-system]
@@ -23,7 +23,10 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/cards"]
+packages = ["src/cman"]
+
+[project.scripts]
+cman = "cman.cli:app"
 
 [tool.pyright]
 include = ["src"]

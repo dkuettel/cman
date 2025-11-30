@@ -6,8 +6,8 @@ from pathlib import Path
 
 from requests.auth import HTTPBasicAuth
 
-from cards import api
-from cards.data import Card, Meta
+from cman import api
+from cman.data import Card, Meta
 
 
 def states_from_apply_diff(

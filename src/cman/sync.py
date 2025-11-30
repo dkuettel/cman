@@ -4,8 +4,8 @@ from pathlib import Path
 import click
 from tqdm import tqdm
 
-from cards.api import auth_from_token, list_cards
-from cards.data import (
+from cman.api import auth_from_token, list_cards
+from cman.data import (
     MetaDiff,
     get_cards,
     get_synced_meta,
@@ -13,7 +13,7 @@ from cards.data import (
     read_meta,
     write_meta,
 )
-from cards.state import MochiDiff, states_from_apply_diff
+from cman.state import MochiDiff, states_from_apply_diff
 
 
 def sync(token: str, base: Path, decks: Mapping[str, str]):
