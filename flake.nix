@@ -2,7 +2,7 @@
   description = "cman";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:dkuettel/nixpkgs/stable";
     flake-utils.url = "github:numtide/flake-utils";
 
     # the python package https://boisgera.github.io/pandoc/ currently needs pandoc 3.2.1 or lower
