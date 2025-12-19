@@ -4,6 +4,8 @@ from subprocess import CalledProcessError, run
 
 from flask import Flask, current_app, redirect, url_for
 
+import cman.nix
+
 template_path = Path(__file__).parent / "preview-template.html"
 template_path = template_path.absolute()
 
@@ -30,7 +32,7 @@ def preview():
                 str(path),
                 # needs to be local, because --self-contained copies it everytime
                 # (using https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/ will rate-limit)
-                f"--katex={os.environ['h']}/result/lib/node_modules/katex/dist/",
+                f"--katex={cman.nix.katex}",
                 f"--metadata=pagetitle={name}",
                 # to find images relative to the markdown file
                 f"--resource-path={path.parent}",

@@ -94,7 +94,20 @@
           paths = devPkgs ++ devLibs ++ prodPkgs;
         };
 
-        pyproject = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
+        nix-py = pkgs.writeTextFile {
+          name = "nix.py";
+          text = ''
+            katex = "${pkgs.nodePackages_latest.katex}/lib/node_modules/katex/dist/"
+          '';
+        };
+        patched = pkgs.runCommandLocal "cman-with-nix-paths" { } ''
+          cp -r ${./.} $out
+          chmod +w $out/src/cman
+          rm $out/src/cman/nix.py
+          cp ${nix-py} $out/src/cman/nix.py
+        '';
+
+        pyproject = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = patched; };
         moduleOverrides =
           final: prev:
           let
