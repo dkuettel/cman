@@ -1,21 +1,38 @@
-import subprocess
-import sys
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Never
 
 import typer
 
-
-class state:
-    base: Path = Path("./data")
+# NOTE minimize imports top level for a fast cli
 
 
-app = typer.Typer(pretty_exceptions_enable=True, no_args_is_help=True)
+def abort(message: str) -> Never:
+    import sys
+
+    print(message, file=sys.stderr)
+    raise typer.Abort()
 
 
-@app.callback()
-def main(base: Path):
-    state.base = base
+def get_base() -> Path:
+    import os
+
+    match os.environ.get("cman_base"):
+        case None:
+            abort("No $cman_base to point at the data folder.")
+        case str(path):
+            path = Path(path)
+            if not path.exists() or not path.is_dir():
+                abort(f"There is no folder at $cman_base={path}.")
+            return path
+
+
+app = typer.Typer(
+    pretty_exceptions_enable=False,
+    no_args_is_help=True,
+    rich_markup_mode=None,
+)
 
 
 @app.command()
@@ -23,10 +40,11 @@ def sync():
     from cman.config import Config, Credentials
     from cman.sync import sync
 
-    config = Config.from_base(state.base)
-    credentials = Credentials.from_base(state.base)
+    base = get_base()
+    config = Config.from_base(base)
+    credentials = Credentials.from_base(base)
 
-    sync(credentials.mochi.token, state.base / config.path, config.decks)
+    sync(credentials.mochi.token, base / config.path, config.decks)
 
 
 @app.command()
@@ -34,9 +52,10 @@ def preview():
     from cman.config import Config
     from cman.preview import main
 
-    config = Config.from_base(state.base)
+    base = get_base()
+    config = Config.from_base(base)
 
-    main(state.base / config.path)
+    main(base / config.path)
 
 
 @app.command()
@@ -45,8 +64,9 @@ def backup():
     from cman.backup import backup_deck
     from cman.config import Config, Credentials
 
-    config = Config.from_base(state.base)
-    credentials = Credentials.from_base(state.base)
+    base = get_base()
+    config = Config.from_base(base)
+    credentials = Credentials.from_base(base)
 
     for deck_name, deck_id in config.decks.items():
         backup_deck(credentials.mochi.token, deck_name, deck_id)
@@ -62,10 +82,13 @@ def rename(
     only renames, does not move, file stays in the same place
     NOTE only renames md files that are also in the meta.json, but not other connected files like images
     """
+    import subprocess
+
     from cman.data import move
 
+    base = get_base()
     target = source.with_name(name)
-    move(state.base, source, target)
+    move(base, source, target)
 
     if edit:
         subprocess.run(["nvim", str(target)], check=True)
@@ -82,25 +105,21 @@ def move(source: Path, deck: str):
     from cman.config import Config
     from cman.data import move
 
-    config = Config.from_base(state.base)
+    base = get_base()
+    config = Config.from_base(base)
 
     if deck not in config.decks:
-        print(f"Deck {deck} does not exist.", file=sys.stderr)
-        raise typer.Abort()
+        abort(f"Deck {deck} does not exist.")
 
     try:
         based_source = source.resolve(strict=True).relative_to(
-            state.base.resolve(strict=True)
+            base.resolve(strict=True)
         )
     except ValueError:
-        print(
-            f"Source {source} must be inside base {state.base}.",
-            file=sys.stderr,
-        )
-        raise typer.Abort()
+        abort(f"Source {source} must be inside base {base}.")
 
-    target = state.base / deck / Path(*based_source.parts[1:])
-    move(state.base, source, target)
+    target = base / deck / Path(*based_source.parts[1:])
+    move(base, source, target)
 
 
 @app.command()
@@ -132,7 +151,8 @@ def fetch(card_id: str):
     from cman.api import auth_from_token, raw_retrieve_card
     from cman.config import Credentials
 
-    credentials = Credentials.from_base(state.base)
+    base = get_base()
+    credentials = Credentials.from_base(base)
     auth = auth_from_token(credentials.mochi.token)
 
     card = raw_retrieve_card(auth, card_id)
