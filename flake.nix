@@ -143,6 +143,7 @@
           LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath [ devLdLibs ]}";
           shellHook = ''
             export PATH=$PWD/bin:$PATH
+            export cman_base=$PWD/data
           '';
         };
 
