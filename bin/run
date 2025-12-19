@@ -1,4 +1,4 @@
 #!/usr/bin/env zsh
 set -eu -o pipefail
 
-uv run --project ${0:a:h:h} python -Pm cards ${0:a:h:h}/data $@
+uv run --project ${0:a:h:h} cman $@
