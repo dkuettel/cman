@@ -20,8 +20,8 @@ def main(base: Path):
 
 @app.command()
 def sync():
-    from cards.config import Config, Credentials
-    from cards.sync import sync
+    from cman.config import Config, Credentials
+    from cman.sync import sync
 
     config = Config.from_base(state.base)
     credentials = Credentials.from_base(state.base)
@@ -31,8 +31,8 @@ def sync():
 
 @app.command()
 def preview():
-    from cards.config import Config
-    from cards.preview import main
+    from cman.config import Config
+    from cman.preview import main
 
     config = Config.from_base(state.base)
 
@@ -42,8 +42,8 @@ def preview():
 @app.command()
 def backup():
     """backup all cards of the configured decks, raw, as json"""
-    from cards.backup import backup_deck
-    from cards.config import Config, Credentials
+    from cman.backup import backup_deck
+    from cman.config import Config, Credentials
 
     config = Config.from_base(state.base)
     credentials = Credentials.from_base(state.base)
@@ -62,7 +62,7 @@ def rename(
     only renames, does not move, file stays in the same place
     NOTE only renames md files that are also in the meta.json, but not other connected files like images
     """
-    from cards.data import move
+    from cman.data import move
 
     target = source.with_name(name)
     move(state.base, source, target)
@@ -79,8 +79,8 @@ def move(source: Path, deck: str):
     only cards that exist in meta.json can be moved
     images are also moved
     """
-    from cards.config import Config
-    from cards.data import move
+    from cman.config import Config
+    from cman.data import move
 
     config = Config.from_base(state.base)
 
@@ -106,7 +106,7 @@ def move(source: Path, deck: str):
 @app.command()
 def show(path: Path):
     """show some info about a card"""
-    from cards.markdown import Markdown
+    from cman.markdown import Markdown
 
     txt = path.read_text()
     md = Markdown.from_str(txt)
@@ -129,8 +129,8 @@ def show(path: Path):
 def fetch(card_id: str):
     from pprint import pp
 
-    from cards.api import auth_from_token, raw_retrieve_card
-    from cards.config import Credentials
+    from cman.api import auth_from_token, raw_retrieve_card
+    from cman.config import Credentials
 
     credentials = Credentials.from_base(state.base)
     auth = auth_from_token(credentials.mochi.token)
