@@ -48,7 +48,7 @@
 
         pkgs = nixpkgs.legacyPackages.${system};
         inherit (pkgs) lib;
-        inherit (builtins) map;
+        inherit (builtins) map toJSON;
 
         python = pkgs.python313;
 
@@ -94,18 +94,20 @@
           paths = devPkgs ++ devLibs ++ prodPkgs;
         };
 
-        nix-py = pkgs.writeTextFile {
-          name = "nix.py";
-          text = ''
-            katex = "${pkgs.nodePackages_latest.katex}/lib/node_modules/katex/dist/"
-          '';
+        paths-json = pkgs.writeTextFile {
+          name = "paths-json";
+          destination = "/src/cman/paths.json";
+          text = toJSON {
+            "katex" = "${pkgs.nodePackages_latest.katex}/lib/node_modules/katex/dist/";
+          };
         };
-        patched = pkgs.runCommandLocal "cman-with-nix-paths" { } ''
-          cp -r ${./.} $out
-          chmod +w $out/src/cman
-          rm $out/src/cman/nix.py
-          cp ${nix-py} $out/src/cman/nix.py
-        '';
+        patched = pkgs.symlinkJoin {
+          name = "cman-with-paths";
+          paths = [
+            paths-json
+            ./.
+          ];
+        };
 
         pyproject = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = patched; };
         moduleOverrides =
