@@ -72,5 +72,6 @@ def get_most_recent_md(folder: Path) -> None | Path:
 
 
 def main(watch_folder: Path = Path("./data")):
+    print("See https://katex.org/docs/supported.html for katex features.")
     app.config["watch_folder"] = watch_folder
     app.run()
