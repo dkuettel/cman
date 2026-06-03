@@ -2,7 +2,7 @@
   description = "cman";
 
   inputs = {
-    nixpkgs.url = "github:dkuettel/nixpkgs/stable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     flake-utils.url = "github:numtide/flake-utils";
 
     # the python package https://boisgera.github.io/pandoc/ currently needs pandoc 3.2.1 or lower
@@ -61,7 +61,7 @@
         prodPkgs = with pkgs; [
           # TODO there is also pandoc-katex ?
           pandocpkgs.legacyPackages.${system}.pandoc
-          nodePackages_latest.katex # for the lib/node_modules/katex/dist files in preview
+          katex # for the lib/node_modules/katex/dist files in preview
         ];
 
         devPkgs = (
@@ -98,7 +98,7 @@
           name = "paths-json";
           destination = "/src/cman/paths.json";
           text = toJSON {
-            "katex" = "${pkgs.nodePackages_latest.katex}/lib/node_modules/katex/dist/";
+            "katex" = "${pkgs.katex}/lib/node_modules/katex/dist/";
           };
         };
         patched = pkgs.symlinkJoin {
