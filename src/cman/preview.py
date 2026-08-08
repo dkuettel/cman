@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from subprocess import CalledProcessError, run
 
@@ -72,6 +73,8 @@ def get_most_recent_md(folder: Path) -> None | Path:
 
 
 def main(watch_folder: Path = Path("./data")):
+    # NOTE would be nice to also configure firefoxes sidebar here, collapsed, but I dont know how
+    os.system("firefox --new-window https://katex.org/docs/supported.html")
     print("See https://katex.org/docs/supported.html for katex features.")
     app.config["watch_folder"] = watch_folder
     app.run()
