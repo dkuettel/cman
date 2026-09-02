@@ -74,6 +74,8 @@ def get_most_recent_md(folder: Path) -> None | Path:
 
 def main(watch_folder: Path = Path("./data")):
     # NOTE would be nice to also configure firefoxes sidebar here, collapsed, but I dont know how
+    # could use --profile (at path even) to have a plain config?
+    # --kiosk is interesting, but not sure how to use it
     os.system("firefox --new-window https://katex.org/docs/supported.html")
     print("See https://katex.org/docs/supported.html for katex features.")
     app.config["watch_folder"] = watch_folder
